@@ -1,16 +1,52 @@
 class NameDial {
-    constructor(textareaId, displayId, upButtonId, downButtonId) {
+    constructor(textareaId, trackId, upButtonId, downButtonId) {
         this.textarea = document.getElementById(textareaId);
-        this.display = document.getElementById(displayId);
+        this.track = document.getElementById(trackId);
         this.upButton = document.getElementById(upButtonId);
         this.downButton = document.getElementById(downButtonId);
-        this.currentIndex = 0;
-        this.names = [];
 
-        this.textarea.addEventListener('change', () => this.updateNamesFromTextarea());
+        // State
+        this.names = [];
+        this.currentPosition = 0; // Floating point for smooth scrolling
+        this.targetPosition = 0;
+        this.isAnimating = false;
+        this.snapTimeout = null;
+
+        // Touch/drag state
+        this.isDragging = false;
+        this.dragStartY = 0;
+        this.dragStartPosition = 0;
+        this.lastDragY = 0;
+        this.lastDragTime = 0;
+        this.velocity = 0;
+
+        // Constants
+        this.VISIBLE_ITEMS = 5; // Show 5 items (2 above, center, 2 below)
+        this.ITEM_HEIGHT = 44; // Height of each item in pixels
+        this.SCALE_FACTOR = 0.2; // How much items scale down (1.0 - 0.6)
+        this.OPACITY_FACTOR = 0.35; // How much items fade (1.0 - 0.3)
+        this.SNAP_DELAY = 150; // Delay before snapping to center
+
+        // Event listeners
         this.textarea.addEventListener('input', () => this.updateNamesFromTextarea());
         this.upButton.addEventListener('click', () => this.scrollUp());
         this.downButton.addEventListener('click', () => this.scrollDown());
+
+        // Mouse wheel
+        this.track.parentElement.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+
+        // Touch events
+        this.track.parentElement.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+        this.track.parentElement.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+        this.track.parentElement.addEventListener('touchend', (e) => this.handleTouchEnd(e));
+
+        // Mouse drag events
+        this.track.parentElement.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+        document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+
+        // Initialize
+        this.updateNamesFromTextarea();
     }
 
     updateNamesFromTextarea() {
@@ -19,66 +55,331 @@ class NameDial {
             .map(name => name.trim())
             .filter(name => name.length > 0);
 
-        if (this.names.length === 0) {
-            this.currentIndex = 0;
-            this.display.textContent = 'Select';
+        // Reset position if list changed
+        if (this.names.length > 0) {
+            this.currentPosition = Math.max(0, Math.min(this.currentPosition, this.names.length - 1));
+            this.targetPosition = Math.round(this.currentPosition);
         } else {
-            // Keep current index valid
-            if (this.currentIndex >= this.names.length) {
-                this.currentIndex = 0;
-            }
-            this.updateDisplay();
+            this.currentPosition = 0;
+            this.targetPosition = 0;
         }
 
+        this.renderWheel();
         updateFullName();
     }
 
     scrollUp() {
         if (this.names.length === 0) return;
-        this.currentIndex = (this.currentIndex - 1 + this.names.length) % this.names.length;
-        this.updateDisplay();
-        updateFullName();
+        this.targetPosition = (this.targetPosition - 1 + this.names.length) % this.names.length;
+        this.animateToTarget();
     }
 
     scrollDown() {
         if (this.names.length === 0) return;
-        this.currentIndex = (this.currentIndex + 1) % this.names.length;
-        this.updateDisplay();
-        updateFullName();
+        this.targetPosition = (this.targetPosition + 1) % this.names.length;
+        this.animateToTarget();
     }
 
-    updateDisplay() {
-        if (this.names.length > 0) {
-            this.display.textContent = this.names[this.currentIndex];
+    handleWheel(event) {
+        if (this.names.length === 0) return;
+        event.preventDefault();
+
+        // Normalize wheel delta
+        const delta = event.deltaY > 0 ? 0.5 : -0.5;
+
+        // Update position
+        this.currentPosition += delta;
+
+        // Wrap around
+        while (this.currentPosition < 0) this.currentPosition += this.names.length;
+        while (this.currentPosition >= this.names.length) this.currentPosition -= this.names.length;
+
+        this.renderWheel();
+        this.scheduleSnap();
+    }
+
+    handleTouchStart(event) {
+        if (this.names.length === 0) return;
+        event.preventDefault();
+
+        this.isDragging = true;
+        this.dragStartY = event.touches[0].clientY;
+        this.dragStartPosition = this.currentPosition;
+        this.lastDragY = event.touches[0].clientY;
+        this.lastDragTime = Date.now();
+        this.velocity = 0;
+
+        // Cancel any ongoing animations
+        this.isAnimating = false;
+        if (this.snapTimeout) {
+            clearTimeout(this.snapTimeout);
+            this.snapTimeout = null;
+        }
+    }
+
+    handleTouchMove(event) {
+        if (!this.isDragging || this.names.length === 0) return;
+        event.preventDefault();
+
+        const currentY = event.touches[0].clientY;
+        const deltaY = currentY - this.dragStartY;
+        const currentTime = Date.now();
+
+        // Calculate velocity for momentum
+        const timeDelta = currentTime - this.lastDragTime;
+        if (timeDelta > 0) {
+            this.velocity = (currentY - this.lastDragY) / timeDelta;
+        }
+
+        this.lastDragY = currentY;
+        this.lastDragTime = currentTime;
+
+        // Convert pixels to position delta
+        const positionDelta = -deltaY / this.ITEM_HEIGHT;
+        this.currentPosition = this.dragStartPosition + positionDelta;
+
+        // Wrap around
+        while (this.currentPosition < 0) this.currentPosition += this.names.length;
+        while (this.currentPosition >= this.names.length) this.currentPosition -= this.names.length;
+
+        this.renderWheel();
+    }
+
+    handleTouchEnd(event) {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+
+        // Apply momentum if velocity is significant
+        if (Math.abs(this.velocity) > 0.5) {
+            this.applyMomentum();
         } else {
-            this.display.textContent = 'Select';
+            this.scheduleSnap();
+        }
+    }
+
+    handleMouseDown(event) {
+        if (this.names.length === 0) return;
+        event.preventDefault();
+
+        this.isDragging = true;
+        this.dragStartY = event.clientY;
+        this.dragStartPosition = this.currentPosition;
+        this.lastDragY = event.clientY;
+        this.lastDragTime = Date.now();
+        this.velocity = 0;
+
+        // Cancel any ongoing animations
+        this.isAnimating = false;
+        if (this.snapTimeout) {
+            clearTimeout(this.snapTimeout);
+            this.snapTimeout = null;
+        }
+    }
+
+    handleMouseMove(event) {
+        if (!this.isDragging || this.names.length === 0) return;
+
+        const currentY = event.clientY;
+        const deltaY = currentY - this.dragStartY;
+        const currentTime = Date.now();
+
+        // Calculate velocity for momentum
+        const timeDelta = currentTime - this.lastDragTime;
+        if (timeDelta > 0) {
+            this.velocity = (currentY - this.lastDragY) / timeDelta;
+        }
+
+        this.lastDragY = currentY;
+        this.lastDragTime = currentTime;
+
+        // Convert pixels to position delta
+        const positionDelta = -deltaY / this.ITEM_HEIGHT;
+        this.currentPosition = this.dragStartPosition + positionDelta;
+
+        // Wrap around
+        while (this.currentPosition < 0) this.currentPosition += this.names.length;
+        while (this.currentPosition >= this.names.length) this.currentPosition -= this.names.length;
+
+        this.renderWheel();
+    }
+
+    handleMouseUp(event) {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+
+        // Apply momentum if velocity is significant
+        if (Math.abs(this.velocity) > 0.5) {
+            this.applyMomentum();
+        } else {
+            this.scheduleSnap();
+        }
+    }
+
+    applyMomentum() {
+        const friction = 0.95;
+        const minVelocity = 0.05;
+
+        const animate = () => {
+            // Apply velocity
+            this.currentPosition -= this.velocity * 10;
+
+            // Wrap around
+            while (this.currentPosition < 0) this.currentPosition += this.names.length;
+            while (this.currentPosition >= this.names.length) this.currentPosition -= this.names.length;
+
+            // Apply friction
+            this.velocity *= friction;
+
+            this.renderWheel();
+
+            // Continue if velocity is significant
+            if (Math.abs(this.velocity) > minVelocity) {
+                requestAnimationFrame(animate);
+            } else {
+                this.scheduleSnap();
+            }
+        };
+
+        animate();
+    }
+
+    scheduleSnap() {
+        if (this.snapTimeout) {
+            clearTimeout(this.snapTimeout);
+        }
+
+        this.snapTimeout = setTimeout(() => {
+            this.snapToNearest();
+        }, this.SNAP_DELAY);
+    }
+
+    snapToNearest() {
+        this.targetPosition = Math.round(this.currentPosition) % this.names.length;
+        this.animateToTarget();
+    }
+
+    animateToTarget() {
+        if (this.names.length === 0) return;
+
+        this.isAnimating = true;
+        const startPosition = this.currentPosition;
+        const endPosition = this.targetPosition;
+
+        // Calculate shortest path (handle wrapping)
+        let delta = endPosition - startPosition;
+        if (Math.abs(delta) > this.names.length / 2) {
+            if (delta > 0) {
+                delta -= this.names.length;
+            } else {
+                delta += this.names.length;
+            }
+        }
+
+        const duration = 250; // milliseconds
+        const startTime = Date.now();
+
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function (ease-out cubic)
+            const eased = 1 - Math.pow(1 - progress, 3);
+
+            this.currentPosition = startPosition + delta * eased;
+
+            // Wrap around
+            while (this.currentPosition < 0) this.currentPosition += this.names.length;
+            while (this.currentPosition >= this.names.length) this.currentPosition -= this.names.length;
+
+            this.renderWheel();
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                this.currentPosition = this.targetPosition;
+                this.isAnimating = false;
+                this.renderWheel();
+                updateFullName();
+            }
+        };
+
+        animate();
+    }
+
+    renderWheel() {
+        if (this.names.length === 0) {
+            this.track.innerHTML = '<div class="scroll-wheel-item" style="opacity: 0.5;">No names</div>';
+            return;
+        }
+
+        // Clear existing items
+        this.track.innerHTML = '';
+
+        // Calculate center index
+        const centerIndex = Math.round(this.currentPosition);
+        const fractionalOffset = this.currentPosition - centerIndex;
+
+        // Render visible items
+        const halfVisible = Math.floor(this.VISIBLE_ITEMS / 2);
+
+        for (let i = -halfVisible; i <= halfVisible; i++) {
+            const index = (centerIndex + i + this.names.length) % this.names.length;
+            const name = this.names[index];
+
+            // Calculate distance from center (accounting for fractional offset)
+            const distance = i - fractionalOffset;
+
+            // Create item element
+            const item = document.createElement('div');
+            item.className = 'scroll-wheel-item';
+            item.textContent = name;
+
+            // Apply transform based on distance
+            const translateY = distance * this.ITEM_HEIGHT;
+            const scale = 1.0 - Math.abs(distance) * this.SCALE_FACTOR;
+            const opacity = 1.0 - Math.abs(distance) * this.OPACITY_FACTOR;
+
+            // Clamp values
+            const finalScale = Math.max(0.6, Math.min(1.0, scale));
+            const finalOpacity = Math.max(0.3, Math.min(1.0, opacity));
+
+            item.style.transform = `translateY(${translateY}px) scale(${finalScale})`;
+            item.style.opacity = finalOpacity;
+
+            // Mark center item as selected
+            if (Math.abs(distance) < 0.1) {
+                item.classList.add('selected');
+            }
+
+            this.track.appendChild(item);
         }
     }
 
     getCurrentName() {
         if (this.names.length === 0) return '';
-        return this.names[this.currentIndex];
+        const index = Math.round(this.currentPosition) % this.names.length;
+        return this.names[index];
     }
 }
 
 // Initialize the three dials
 const firstNameDial = new NameDial(
     'firstNamesList',
-    'firstNameDisplay',
+    'firstNameTrack',
     'firstNameUp',
     'firstNameDown'
 );
 
 const middleNameDial = new NameDial(
     'middleNamesList',
-    'middleNameDisplay',
+    'middleNameTrack',
     'middleNameUp',
     'middleNameDown'
 );
 
 const lastNameDial = new NameDial(
     'lastNamesList',
-    'lastNameDisplay',
+    'lastNameTrack',
     'lastNameUp',
     'lastNameDown'
 );

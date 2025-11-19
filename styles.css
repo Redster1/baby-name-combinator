@@ -50,10 +50,10 @@ h3 {
 
 .dial {
     position: relative;
-    width: 120px;
-    height: 180px;
+    width: 160px;
+    height: 240px;
     border: 3px solid #667eea;
-    border-radius: 8px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     display: flex;
     align-items: center;
@@ -62,16 +62,63 @@ h3 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.dial-display {
+.scroll-wheel-viewport {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-wheel-center-indicator {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 44px;
+    transform: translateY(-50%);
+    background: rgba(102, 126, 234, 0.08);
+    border-top: 2px solid rgba(102, 126, 234, 0.3);
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.scroll-wheel-track {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-wheel-item {
+    position: absolute;
+    width: 100%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.1em;
-    font-weight: bold;
+    font-weight: 600;
     color: #333;
     text-align: center;
-    max-height: 60px;
+    padding: 0 10px;
+    user-select: none;
+    transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+    transform-origin: center center;
+    white-space: nowrap;
     overflow: hidden;
-    word-wrap: break-word;
-    width: 100%;
-    padding: 10px;
+    text-overflow: ellipsis;
+}
+
+.scroll-wheel-item.selected {
+    font-weight: 700;
+    color: #667eea;
 }
 
 .dial-button {
