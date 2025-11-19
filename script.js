@@ -362,6 +362,9 @@ class NameDial {
     }
 }
 
+// Global flag to track if all dials are initialized
+let allDialsInitialized = false;
+
 // Initialize the three dials
 const firstNameDial = new NameDial(
     'firstNamesList',
@@ -384,7 +387,15 @@ const lastNameDial = new NameDial(
     'lastNameDown'
 );
 
+// Mark dials as initialized
+allDialsInitialized = true;
+
 function updateFullName() {
+    // Only run if all dials are initialized
+    if (!allDialsInitialized) {
+        return;
+    }
+
     const firstName = firstNameDial.getCurrentName();
     const middleName = middleNameDial.getCurrentName();
     const lastName = lastNameDial.getCurrentName();
