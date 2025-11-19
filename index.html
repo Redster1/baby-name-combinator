@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Name Combinator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Baby Name Combinator</h1>
+
+        <div class="dialers-section">
+            <div class="dial-container">
+                <h3>First Name</h3>
+                <div class="dial" id="firstNameDial">
+                    <div class="dial-display" id="firstNameDisplay">Select</div>
+                    <button class="dial-button dial-up" id="firstNameUp">▲</button>
+                    <button class="dial-button dial-down" id="firstNameDown">▼</button>
+                </div>
+            </div>
+
+            <div class="dial-container">
+                <h3>Middle Name</h3>
+                <div class="dial" id="middleNameDial">
+                    <div class="dial-display" id="middleNameDisplay">Select</div>
+                    <button class="dial-button dial-up" id="middleNameUp">▲</button>
+                    <button class="dial-button dial-down" id="middleNameDown">▼</button>
+                </div>
+            </div>
+
+            <div class="dial-container">
+                <h3>Last Name</h3>
+                <div class="dial" id="lastNameDial">
+                    <div class="dial-display" id="lastNameDisplay">Select</div>
+                    <button class="dial-button dial-up" id="lastNameUp">▲</button>
+                    <button class="dial-button dial-down" id="lastNameDown">▼</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result">
+            <h2 id="fullName">Name Combination</h2>
+        </div>
+
+        <div class="input-section">
+            <div class="textarea-container">
+                <h3>First Names</h3>
+                <textarea id="firstNamesList" placeholder="Enter first names, one per line"></textarea>
+            </div>
+
+            <div class="textarea-container">
+                <h3>Middle Names</h3>
+                <textarea id="middleNamesList" placeholder="Enter middle names, one per line"></textarea>
+            </div>
+
+            <div class="textarea-container">
+                <h3>Last Names</h3>
+                <textarea id="lastNamesList" placeholder="Enter last names, one per line"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
