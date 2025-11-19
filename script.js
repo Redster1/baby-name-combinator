@@ -5,6 +5,26 @@ class NameDial {
         this.upButton = document.getElementById(upButtonId);
         this.downButton = document.getElementById(downButtonId);
 
+        // Verify elements exist
+        if (!this.textarea) {
+            console.error(`Textarea not found: ${textareaId}`);
+            return;
+        }
+        if (!this.track) {
+            console.error(`Track not found: ${trackId}`);
+            return;
+        }
+        if (!this.upButton) {
+            console.error(`Up button not found: ${upButtonId}`);
+            return;
+        }
+        if (!this.downButton) {
+            console.error(`Down button not found: ${downButtonId}`);
+            return;
+        }
+
+        this.viewport = this.track.parentElement;
+
         // State
         this.names = [];
         this.currentPosition = 0; // Floating point for smooth scrolling
@@ -33,23 +53,30 @@ class NameDial {
         this.downButton.addEventListener('click', () => this.scrollDown());
 
         // Mouse wheel
-        this.track.parentElement.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+        this.viewport.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
 
         // Touch events
-        this.track.parentElement.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-        this.track.parentElement.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-        this.track.parentElement.addEventListener('touchend', (e) => this.handleTouchEnd(e));
+        this.viewport.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+        this.viewport.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+        this.viewport.addEventListener('touchend', (e) => this.handleTouchEnd(e));
 
         // Mouse drag events
-        this.track.parentElement.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-        document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+        this.viewport.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+
+        // Store bound functions so we can remove them later
+        this.boundMouseMove = (e) => this.handleMouseMove(e);
+        this.boundMouseUp = (e) => this.handleMouseUp(e);
 
         // Initialize
         this.updateNamesFromTextarea();
     }
 
     updateNamesFromTextarea() {
+        if (!this.textarea || !this.track) {
+            console.error('updateNamesFromTextarea: Missing elements');
+            return;
+        }
+
         this.names = this.textarea.value
             .split('\n')
             .map(name => name.trim())
@@ -168,6 +195,10 @@ class NameDial {
         this.lastDragTime = Date.now();
         this.velocity = 0;
 
+        // Add document-level listeners for dragging
+        document.addEventListener('mousemove', this.boundMouseMove);
+        document.addEventListener('mouseup', this.boundMouseUp);
+
         // Cancel any ongoing animations
         this.isAnimating = false;
         if (this.snapTimeout) {
@@ -206,6 +237,10 @@ class NameDial {
     handleMouseUp(event) {
         if (!this.isDragging) return;
         this.isDragging = false;
+
+        // Remove document-level listeners
+        document.removeEventListener('mousemove', this.boundMouseMove);
+        document.removeEventListener('mouseup', this.boundMouseUp);
 
         // Apply momentum if velocity is significant
         if (Math.abs(this.velocity) > 0.5) {
@@ -372,6 +407,7 @@ const firstNameDial = new NameDial(
     'firstNameUp',
     'firstNameDown'
 );
+console.log('First name dial initialized:', firstNameDial);
 
 const middleNameDial = new NameDial(
     'middleNamesList',
@@ -379,6 +415,7 @@ const middleNameDial = new NameDial(
     'middleNameUp',
     'middleNameDown'
 );
+console.log('Middle name dial initialized:', middleNameDial);
 
 const lastNameDial = new NameDial(
     'lastNamesList',
@@ -386,9 +423,11 @@ const lastNameDial = new NameDial(
     'lastNameUp',
     'lastNameDown'
 );
+console.log('Last name dial initialized:', lastNameDial);
 
 // Mark dials as initialized
 allDialsInitialized = true;
+console.log('All dials initialized');
 
 function updateFullName() {
     // Only run if all dials are initialized
