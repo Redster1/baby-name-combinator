@@ -175,6 +175,12 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
+}
+
+.scroll-wheel-viewport:focus {
+    outline: 3px solid #FF7B6B;
+    outline-offset: -3px;
 }
 
 .scroll-wheel-center-indicator {

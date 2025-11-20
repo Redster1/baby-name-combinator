@@ -47,8 +47,25 @@ class NameDial {
         this.boundMouseMove = (e) => this.handleMouseMove(e);
         this.boundMouseUp = (e) => this.handleMouseUp(e);
 
+        // Keyboard navigation
+        this.viewport.addEventListener('keydown', (e) => this.handleKeydown(e));
+
         // Initialize
         this.updateNamesFromTextarea();
+    }
+
+    handleKeydown(event) {
+        if (this.isLocked || this.names.length === 0) return;
+
+        // Handle up/down arrows for name navigation
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            this.scrollUp();
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            this.scrollDown();
+        }
+        // Left/right arrows are handled globally to switch between dials
     }
 
     updateNamesFromTextarea() {
@@ -407,6 +424,39 @@ const lastNameDial = new NameDial(
 
 // Mark dials as initialized
 allDialsInitialized = true;
+
+// Array of dials for keyboard navigation
+const dials = [firstNameDial, middleNameDial, lastNameDial];
+const dialOrder = ['first', 'middle', 'last'];
+
+// Global keyboard handler for switching between dials
+document.addEventListener('keydown', (event) => {
+    // Only handle left/right arrows
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+    // Check if any dial viewport is focused
+    const focusedElement = document.activeElement;
+    if (!focusedElement.classList.contains('scroll-wheel-viewport')) return;
+
+    const currentDialType = focusedElement.getAttribute('data-dial');
+    const currentIndex = dialOrder.indexOf(currentDialType);
+
+    if (currentIndex === -1) return;
+
+    event.preventDefault();
+
+    let newIndex;
+    if (event.key === 'ArrowLeft') {
+        // Move to previous dial (wrap around)
+        newIndex = (currentIndex - 1 + dials.length) % dials.length;
+    } else {
+        // Move to next dial (wrap around)
+        newIndex = (currentIndex + 1) % dials.length;
+    }
+
+    // Focus the new dial's viewport
+    dials[newIndex].viewport.focus();
+});
 
 function updateFullName() {
     // Only run if all dials are initialized
