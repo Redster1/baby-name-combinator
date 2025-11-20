@@ -429,3 +429,57 @@ function updateFullName() {
 
 // Initialize display
 updateFullName();
+
+// Floating names background animation
+function createFloatingNames() {
+    const container = document.getElementById('floatingNames');
+    if (!container) return;
+
+    const babyNames = [
+        'Olivia', 'Emma', 'Ava', 'Sophia', 'Charlotte', 'Amelia', 'Isabella', 'Mia', 'Luna', 'Harper',
+        'Liam', 'Noah', 'Oliver', 'Elijah', 'James', 'William', 'Benjamin', 'Lucas', 'Henry', 'Theodore',
+        'Grace', 'Rose', 'Mae', 'Elizabeth', 'Marie', 'Jane', 'Claire', 'Kate', 'Anne', 'Joy',
+        'Alexander', 'Michael', 'Daniel', 'Matthew', 'Joseph', 'David', 'Samuel', 'Jackson', 'Sebastian'
+    ];
+
+    function createFloatingName() {
+        const name = babyNames[Math.floor(Math.random() * babyNames.length)];
+        const nameEl = document.createElement('div');
+        nameEl.className = 'floating-name';
+        nameEl.textContent = name;
+
+        // Random starting position
+        const startY = Math.random() * 100;
+        nameEl.style.top = startY + '%';
+
+        // Random size
+        const fontSize = 16 + Math.random() * 28; // 16-44px
+        nameEl.style.fontSize = fontSize + 'px';
+
+        // Random animation duration
+        const duration = 15 + Math.random() * 15; // 15-30 seconds
+        nameEl.style.animationDuration = duration + 's';
+
+        // Random animation delay
+        const delay = Math.random() * 10;
+        nameEl.style.animationDelay = delay + 's';
+
+        container.appendChild(nameEl);
+
+        // Remove after animation completes
+        setTimeout(() => {
+            nameEl.remove();
+        }, (duration + delay) * 1000);
+    }
+
+    // Create initial set of names
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => createFloatingName(), i * 800);
+    }
+
+    // Continuously add new names
+    setInterval(createFloatingName, 2000);
+}
+
+// Start floating names animation
+createFloatingNames();
