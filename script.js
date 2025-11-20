@@ -1,9 +1,7 @@
 class NameDial {
-    constructor(textareaId, trackId, upButtonId, downButtonId) {
+    constructor(textareaId, trackId) {
         this.textarea = document.getElementById(textareaId);
         this.track = document.getElementById(trackId);
-        this.upButton = document.getElementById(upButtonId);
-        this.downButton = document.getElementById(downButtonId);
         this.viewport = this.track.parentElement;
 
         // State
@@ -22,16 +20,14 @@ class NameDial {
         this.velocity = 0;
 
         // Constants
-        this.VISIBLE_ITEMS = 5; // Show 5 items (2 above, center, 2 below)
+        this.VISIBLE_ITEMS = 7; // Show 7 items (3 above, center, 3 below)
         this.ITEM_HEIGHT = 44; // Height of each item in pixels
-        this.SCALE_FACTOR = 0.2; // How much items scale down (1.0 - 0.6)
-        this.OPACITY_FACTOR = 0.35; // How much items fade (1.0 - 0.3)
+        this.SCALE_FACTOR = 0.125; // How much items scale down (at distance 3: 0.625 scale)
+        this.OPACITY_FACTOR = 0.15; // How much items fade (at distance 3: 0.55 opacity)
         this.SNAP_DELAY = 150; // Delay before snapping to center
 
         // Event listeners
         this.textarea.addEventListener('input', () => this.updateNamesFromTextarea());
-        this.upButton.addEventListener('click', () => this.scrollUp());
-        this.downButton.addEventListener('click', () => this.scrollDown());
 
         // Mouse wheel
         this.viewport.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
@@ -351,8 +347,8 @@ class NameDial {
             const opacity = 1.0 - Math.abs(distance) * this.OPACITY_FACTOR;
 
             // Clamp values
-            const finalScale = Math.max(0.6, Math.min(1.0, scale));
-            const finalOpacity = Math.max(0.3, Math.min(1.0, opacity));
+            const finalScale = Math.max(0.5, Math.min(1.0, scale));
+            const finalOpacity = Math.max(0.2, Math.min(1.0, opacity));
 
             item.style.transform = `translateY(${translateY}px) scale(${finalScale})`;
             item.style.opacity = finalOpacity;
@@ -379,23 +375,17 @@ let allDialsInitialized = false;
 // Initialize the three dials
 const firstNameDial = new NameDial(
     'firstNamesList',
-    'firstNameTrack',
-    'firstNameUp',
-    'firstNameDown'
+    'firstNameTrack'
 );
 
 const middleNameDial = new NameDial(
     'middleNamesList',
-    'middleNameTrack',
-    'middleNameUp',
-    'middleNameDown'
+    'middleNameTrack'
 );
 
 const lastNameDial = new NameDial(
     'lastNamesList',
-    'lastNameTrack',
-    'lastNameUp',
-    'lastNameDown'
+    'lastNameTrack'
 );
 
 // Mark dials as initialized
