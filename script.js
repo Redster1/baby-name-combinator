@@ -1,7 +1,8 @@
 class NameDial {
-    constructor(textareaId, trackId) {
+    constructor(textareaId, trackId, lockButtonId) {
         this.textarea = document.getElementById(textareaId);
         this.track = document.getElementById(trackId);
+        this.lockButton = document.getElementById(lockButtonId);
         this.viewport = this.track.parentElement;
 
         // State
@@ -10,6 +11,7 @@ class NameDial {
         this.targetPosition = 0;
         this.isAnimating = false;
         this.snapTimeout = null;
+        this.isLocked = false;
 
         // Touch/drag state
         this.isDragging = false;
@@ -28,6 +30,7 @@ class NameDial {
 
         // Event listeners
         this.textarea.addEventListener('input', () => this.updateNamesFromTextarea());
+        this.lockButton.addEventListener('click', () => this.toggleLock());
 
         // Mouse wheel
         this.viewport.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
@@ -79,8 +82,19 @@ class NameDial {
         this.animateToTarget();
     }
 
+    toggleLock() {
+        this.isLocked = !this.isLocked;
+        if (this.isLocked) {
+            this.lockButton.classList.add('locked');
+            this.lockButton.textContent = '🔒';
+        } else {
+            this.lockButton.classList.remove('locked');
+            this.lockButton.textContent = '🔓';
+        }
+    }
+
     handleWheel(event) {
-        if (this.names.length === 0) return;
+        if (this.isLocked || this.names.length === 0) return;
         event.preventDefault();
 
         // Normalize wheel delta
@@ -98,7 +112,7 @@ class NameDial {
     }
 
     handleTouchStart(event) {
-        if (this.names.length === 0) return;
+        if (this.isLocked || this.names.length === 0) return;
         event.preventDefault();
 
         this.isDragging = true;
@@ -157,7 +171,7 @@ class NameDial {
     }
 
     handleMouseDown(event) {
-        if (this.names.length === 0) return;
+        if (this.isLocked || this.names.length === 0) return;
         event.preventDefault();
 
         this.isDragging = true;
@@ -375,17 +389,20 @@ let allDialsInitialized = false;
 // Initialize the three dials
 const firstNameDial = new NameDial(
     'firstNamesList',
-    'firstNameTrack'
+    'firstNameTrack',
+    'firstNameLock'
 );
 
 const middleNameDial = new NameDial(
     'middleNamesList',
-    'middleNameTrack'
+    'middleNameTrack',
+    'middleNameLock'
 );
 
 const lastNameDial = new NameDial(
     'lastNamesList',
-    'lastNameTrack'
+    'lastNameTrack',
+    'lastNameLock'
 );
 
 // Mark dials as initialized
