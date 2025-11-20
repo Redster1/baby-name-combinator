@@ -479,3 +479,6 @@ function updateFullName() {
 
 // Initialize display
 updateFullName();
+
+// Auto-focus first viewport so arrow keys work immediately
+firstNameDial.viewport.focus();

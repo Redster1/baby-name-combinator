@@ -41,7 +41,7 @@ body {
 .container::after {
     content: '';
     position: absolute;
-    right: -200px;
+    right: -350px;
     bottom: 10%;
     width: 400px;
     height: 400px;
