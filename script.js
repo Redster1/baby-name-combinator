@@ -47,25 +47,8 @@ class NameDial {
         this.boundMouseMove = (e) => this.handleMouseMove(e);
         this.boundMouseUp = (e) => this.handleMouseUp(e);
 
-        // Keyboard navigation
-        this.viewport.addEventListener('keydown', (e) => this.handleKeydown(e));
-
         // Initialize
         this.updateNamesFromTextarea();
-    }
-
-    handleKeydown(event) {
-        if (this.isLocked || this.names.length === 0) return;
-
-        // Handle up/down arrows for name navigation
-        if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            this.scrollUp();
-        } else if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            this.scrollDown();
-        }
-        // Left/right arrows are handled globally to switch between dials
     }
 
     updateNamesFromTextarea() {
@@ -429,33 +412,45 @@ allDialsInitialized = true;
 const dials = [firstNameDial, middleNameDial, lastNameDial];
 const dialOrder = ['first', 'middle', 'last'];
 
-// Global keyboard handler for switching between dials
+// Unified global keyboard handler for all dial navigation
 document.addEventListener('keydown', (event) => {
-    // Only handle left/right arrows
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-
-    // Check if any dial viewport is focused
     const focusedElement = document.activeElement;
-    if (!focusedElement.classList.contains('scroll-wheel-viewport')) return;
+
+    // Only respond when a dial viewport is focused
+    if (!focusedElement || !focusedElement.classList.contains('scroll-wheel-viewport')) return;
 
     const currentDialType = focusedElement.getAttribute('data-dial');
     const currentIndex = dialOrder.indexOf(currentDialType);
-
     if (currentIndex === -1) return;
 
-    event.preventDefault();
+    const currentDial = dials[currentIndex];
 
-    let newIndex;
-    if (event.key === 'ArrowLeft') {
-        // Move to previous dial (wrap around)
-        newIndex = (currentIndex - 1 + dials.length) % dials.length;
-    } else {
-        // Move to next dial (wrap around)
-        newIndex = (currentIndex + 1) % dials.length;
+    switch (event.key) {
+        case 'ArrowUp':
+            if (!currentDial.isLocked && currentDial.names.length > 0) {
+                event.preventDefault();
+                currentDial.scrollUp();
+            }
+            break;
+        case 'ArrowDown':
+            if (!currentDial.isLocked && currentDial.names.length > 0) {
+                event.preventDefault();
+                currentDial.scrollDown();
+            }
+            break;
+        case 'ArrowLeft':
+            event.preventDefault();
+            dials[(currentIndex - 1 + dials.length) % dials.length].viewport.focus();
+            break;
+        case 'ArrowRight':
+            event.preventDefault();
+            dials[(currentIndex + 1) % dials.length].viewport.focus();
+            break;
+        case 'Enter':
+            event.preventDefault();
+            saveCurrentName();
+            break;
     }
-
-    // Focus the new dial's viewport
-    dials[newIndex].viewport.focus();
 });
 
 function updateFullName() {
@@ -502,19 +497,10 @@ document.getElementById('fullName').addEventListener('click', saveCurrentName);
 // Click on save button to save
 document.getElementById('saveNameBtn').addEventListener('click', saveCurrentName);
 
-// Enter key saves the name when a viewport is focused
-document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter') return;
-
-    const focusedElement = document.activeElement;
-    if (focusedElement.classList.contains('scroll-wheel-viewport')) {
-        event.preventDefault();
-        saveCurrentName();
-    }
-});
-
 // Auto-focus first viewport so arrow keys work immediately
-// Use setTimeout to ensure DOM is fully ready for focus
-setTimeout(() => {
-    firstNameDial.viewport.focus();
-}, 100);
+// Use double requestAnimationFrame to ensure layout is complete
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        firstNameDial.viewport.focus();
+    });
+});
