@@ -568,24 +568,24 @@ document.querySelectorAll('.share-option').forEach(btn => {
             case 'copy':
                 try {
                     await navigator.clipboard.writeText(text);
-                    btn.querySelector('span:last-child').textContent = 'Copied!';
-                    setTimeout(() => {
-                        btn.querySelector('span:last-child').textContent = 'Copy';
-                    }, 2000);
                 } catch (err) {
                     // Fallback for older browsers
                     const textarea = document.createElement('textarea');
                     textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
                     document.body.appendChild(textarea);
+                    textarea.focus();
                     textarea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textarea);
-                    btn.querySelector('span:last-child').textContent = 'Copied!';
-                    setTimeout(() => {
-                        btn.querySelector('span:last-child').textContent = 'Copy';
-                    }, 2000);
                 }
-                break;
+                btn.querySelector('span:last-child').textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.querySelector('span:last-child').textContent = 'Copy';
+                    closeShareModal();
+                }, 1000);
+                return; // Don't close modal immediately
 
             case 'sms':
                 window.open(`sms:?body=${encodedText}`, '_blank');
