@@ -14,12 +14,12 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     background: #FFF8F0;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    padding: 40px 50px;
     position: relative;
     z-index: 1;
 }
@@ -67,30 +67,61 @@ h3 {
 
 .top-section {
     display: flex;
-    gap: 30px;
-    margin-bottom: 40px;
-    align-items: flex-start;
+    gap: 40px;
+    margin-bottom: 30px;
+    align-items: stretch;
+    flex-wrap: nowrap;
 }
 
 .dialers-section {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
+    gap: 25px;
     flex-shrink: 0;
 }
 
 .saved-names-section {
     flex: 1;
-    min-width: 200px;
+    min-width: 220px;
+    max-width: 280px;
     display: flex;
     flex-direction: column;
+    background: linear-gradient(145deg, #FFFCF7 0%, #FFF5EE 100%);
+    border: 2px solid #FFCDB2;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(255, 123, 107, 0.12);
+}
+
+.saved-names-section h3 {
+    color: #E76A5C;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 123, 107, 0.15);
 }
 
 .saved-names-section textarea {
     flex: 1;
-    min-height: 320px;
-    resize: vertical;
+    min-height: 280px;
+    border: none;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: #5D4E37;
+    resize: none;
+}
+
+.saved-names-section textarea:focus {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: none;
+}
+
+.saved-names-section textarea::placeholder {
+    color: #B8A89A;
+    font-style: italic;
 }
 
 .dial-container {
@@ -215,55 +246,65 @@ h3 {
 }
 
 .result {
-    text-align: center;
     margin-bottom: 40px;
-    padding: 20px;
-    background: linear-gradient(135deg, #FFEEE6 0%, #FFE0D6 100%);
-    border-radius: 8px;
-    min-height: 60px;
+    padding: 18px 25px;
+    background: linear-gradient(135deg, #FFF5F0 0%, #FFEEE6 100%);
+    border-radius: 16px;
+    min-height: 70px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border: 2px solid rgba(255, 123, 107, 0.2);
-    position: relative;
+    justify-content: space-between;
+    border: 2px solid rgba(255, 153, 128, 0.25);
+    box-shadow: 0 2px 12px rgba(255, 123, 107, 0.08);
+    gap: 20px;
 }
 
 #fullName {
-    font-size: 1.8em;
+    font-size: 1.7em;
     color: #E76A5C;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: all 0.15s ease;
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    padding: 5px 0;
+    border-radius: 8px;
 }
 
 #fullName:hover {
-    transform: scale(1.02);
+    background: rgba(255, 123, 107, 0.08);
+    transform: scale(1.01);
 }
 
 #fullName:active {
-    transform: scale(0.98);
+    transform: scale(0.99);
+    background: rgba(255, 123, 107, 0.12);
 }
 
 .save-button {
-    position: absolute;
-    right: 15px;
-    padding: 8px 16px;
-    background: #FF7B6B;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #FF8C7A 0%, #FF7B6B 100%);
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 0.9em;
+    border-radius: 25px;
+    font-size: 0.95em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: 0 3px 12px rgba(255, 123, 107, 0.3);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .save-button:hover {
-    background: #E76A5C;
-    transform: scale(1.05);
+    background: linear-gradient(135deg, #FF7B6B 0%, #E76A5C 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(255, 123, 107, 0.4);
 }
 
 .save-button:active {
-    transform: scale(0.95);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 123, 107, 0.3);
 }
 
 .input-section {
@@ -297,6 +338,22 @@ textarea:focus {
     box-shadow: 0 0 8px rgba(255, 123, 107, 0.3);
 }
 
+@media (max-width: 950px) {
+    .top-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .saved-names-section {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .saved-names-section textarea {
+        min-height: 150px;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 20px;
@@ -307,16 +364,13 @@ textarea:focus {
         margin-bottom: 20px;
     }
 
-    .top-section {
-        flex-direction: column;
-    }
-
     .dialers-section {
-        gap: 20px;
+        gap: 15px;
     }
 
-    .saved-names-section textarea {
-        min-height: 150px;
+    .dial {
+        width: 140px;
+        height: 280px;
     }
 
     .input-section {
@@ -327,13 +381,18 @@ textarea:focus {
         min-height: 150px;
     }
 
-    .save-button {
-        position: static;
-        margin-top: 10px;
-    }
-
     .result {
         flex-direction: column;
-        gap: 10px;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    #fullName {
+        font-size: 1.4em;
+    }
+
+    .save-button {
+        width: 100%;
+        padding: 14px 24px;
     }
 }
