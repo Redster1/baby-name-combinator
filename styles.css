@@ -178,6 +178,12 @@ h3 {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(255, 123, 107, 0.2);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dial:focus-within {
+    border-color: #FF7B6B;
+    box-shadow: 0 4px 20px rgba(255, 123, 107, 0.35);
 }
 
 .scroll-wheel-viewport {
@@ -192,8 +198,7 @@ h3 {
 }
 
 .scroll-wheel-viewport:focus {
-    outline: 3px solid #FF7B6B;
-    outline-offset: -3px;
+    outline: none;
 }
 
 .scroll-wheel-center-indicator {
