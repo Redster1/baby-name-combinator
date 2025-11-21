@@ -10,53 +10,98 @@
     <div class="container">
         <h1>Baby Name Combinator</h1>
 
-        <div class="dialers-section">
-            <div class="dial-container">
-                <h3>First Name</h3>
-                <div class="dial" id="firstNameDial">
-                    <div class="dial-display" id="firstNameDisplay">Select</div>
-                    <button class="dial-button dial-up" id="firstNameUp">▲</button>
-                    <button class="dial-button dial-down" id="firstNameDown">▼</button>
+        <div class="top-section">
+            <div class="dialers-section">
+                <div class="dial-container">
+                    <h3>First Name</h3>
+                    <div class="dial" id="firstNameDial">
+                        <button class="lock-button" id="firstNameLock" aria-label="Lock/Unlock First Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="first">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="firstNameTrack"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dial-container">
+                    <h3>Middle Name</h3>
+                    <div class="dial" id="middleNameDial">
+                        <button class="lock-button" id="middleNameLock" aria-label="Lock/Unlock Middle Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="middle">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="middleNameTrack"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dial-container">
+                    <h3>Last Name</h3>
+                    <div class="dial" id="lastNameDial">
+                        <button class="lock-button" id="lastNameLock" aria-label="Lock/Unlock Last Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="last">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="lastNameTrack"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="dial-container">
-                <h3>Middle Name</h3>
-                <div class="dial" id="middleNameDial">
-                    <div class="dial-display" id="middleNameDisplay">Select</div>
-                    <button class="dial-button dial-up" id="middleNameUp">▲</button>
-                    <button class="dial-button dial-down" id="middleNameDown">▼</button>
-                </div>
-            </div>
-
-            <div class="dial-container">
-                <h3>Last Name</h3>
-                <div class="dial" id="lastNameDial">
-                    <div class="dial-display" id="lastNameDisplay">Select</div>
-                    <button class="dial-button dial-up" id="lastNameUp">▲</button>
-                    <button class="dial-button dial-down" id="lastNameDown">▼</button>
-                </div>
+            <div class="saved-names-section">
+                <h3>Saved Names</h3>
+                <textarea id="savedNamesList" placeholder="Saved name combinations will appear here..." readonly></textarea>
             </div>
         </div>
 
         <div class="result">
             <h2 id="fullName">Name Combination</h2>
+            <button class="save-button" id="saveNameBtn">Save Name</button>
         </div>
 
         <div class="input-section">
             <div class="textarea-container">
                 <h3>First Names</h3>
-                <textarea id="firstNamesList" placeholder="Enter first names, one per line"></textarea>
+                <textarea id="firstNamesList" placeholder="Enter first names, one per line">Olivia
+Emma
+Ava
+Sophia
+Charlotte
+Amelia
+Liam
+Noah
+Oliver
+Elijah
+James
+Benjamin</textarea>
             </div>
 
             <div class="textarea-container">
                 <h3>Middle Names</h3>
-                <textarea id="middleNamesList" placeholder="Enter middle names, one per line"></textarea>
+                <textarea id="middleNamesList" placeholder="Enter middle names, one per line">Grace
+Rose
+Marie
+Elizabeth
+Jane
+Mae
+James
+Alexander
+Michael
+William
+Thomas
+Joseph</textarea>
             </div>
 
             <div class="textarea-container">
                 <h3>Last Names</h3>
-                <textarea id="lastNamesList" placeholder="Enter last names, one per line"></textarea>
+                <textarea id="lastNamesList" placeholder="Enter last names, one per line">Smith
+Johnson
+Williams
+Brown
+Jones
+Garcia
+Miller
+Davis
+Martinez
+Anderson</textarea>
             </div>
         </div>
     </div>
