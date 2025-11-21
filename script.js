@@ -514,4 +514,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Auto-focus first viewport so arrow keys work immediately
-firstNameDial.viewport.focus();
+// Use setTimeout to ensure DOM is fully ready for focus
+setTimeout(() => {
+    firstNameDial.viewport.focus();
+}, 100);
