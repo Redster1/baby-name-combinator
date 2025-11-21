@@ -480,5 +480,38 @@ function updateFullName() {
 // Initialize display
 updateFullName();
 
+// Save name functionality
+function saveCurrentName() {
+    const fullNameElement = document.getElementById('fullName');
+    const savedNamesTextarea = document.getElementById('savedNamesList');
+    const currentName = fullNameElement.textContent;
+
+    if (!currentName || currentName === 'Name Combination') return;
+
+    // Prepend the name to the saved names list
+    if (savedNamesTextarea.value) {
+        savedNamesTextarea.value = currentName + '\n' + savedNamesTextarea.value;
+    } else {
+        savedNamesTextarea.value = currentName;
+    }
+}
+
+// Click on name combination to save
+document.getElementById('fullName').addEventListener('click', saveCurrentName);
+
+// Click on save button to save
+document.getElementById('saveNameBtn').addEventListener('click', saveCurrentName);
+
+// Enter key saves the name when a viewport is focused
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+
+    const focusedElement = document.activeElement;
+    if (focusedElement.classList.contains('scroll-wheel-viewport')) {
+        event.preventDefault();
+        saveCurrentName();
+    }
+});
+
 // Auto-focus first viewport so arrow keys work immediately
 firstNameDial.viewport.focus();

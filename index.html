@@ -10,43 +10,51 @@
     <div class="container">
         <h1>Baby Name Combinator</h1>
 
-        <div class="dialers-section">
-            <div class="dial-container">
-                <h3>First Name</h3>
-                <div class="dial" id="firstNameDial">
-                    <button class="lock-button" id="firstNameLock" aria-label="Lock/Unlock First Name">🔓</button>
-                    <div class="scroll-wheel-viewport" tabindex="0" data-dial="first">
-                        <div class="scroll-wheel-center-indicator"></div>
-                        <div class="scroll-wheel-track" id="firstNameTrack"></div>
+        <div class="top-section">
+            <div class="dialers-section">
+                <div class="dial-container">
+                    <h3>First Name</h3>
+                    <div class="dial" id="firstNameDial">
+                        <button class="lock-button" id="firstNameLock" aria-label="Lock/Unlock First Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="first">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="firstNameTrack"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dial-container">
+                    <h3>Middle Name</h3>
+                    <div class="dial" id="middleNameDial">
+                        <button class="lock-button" id="middleNameLock" aria-label="Lock/Unlock Middle Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="middle">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="middleNameTrack"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dial-container">
+                    <h3>Last Name</h3>
+                    <div class="dial" id="lastNameDial">
+                        <button class="lock-button" id="lastNameLock" aria-label="Lock/Unlock Last Name">🔓</button>
+                        <div class="scroll-wheel-viewport" tabindex="0" data-dial="last">
+                            <div class="scroll-wheel-center-indicator"></div>
+                            <div class="scroll-wheel-track" id="lastNameTrack"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="dial-container">
-                <h3>Middle Name</h3>
-                <div class="dial" id="middleNameDial">
-                    <button class="lock-button" id="middleNameLock" aria-label="Lock/Unlock Middle Name">🔓</button>
-                    <div class="scroll-wheel-viewport" tabindex="0" data-dial="middle">
-                        <div class="scroll-wheel-center-indicator"></div>
-                        <div class="scroll-wheel-track" id="middleNameTrack"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dial-container">
-                <h3>Last Name</h3>
-                <div class="dial" id="lastNameDial">
-                    <button class="lock-button" id="lastNameLock" aria-label="Lock/Unlock Last Name">🔓</button>
-                    <div class="scroll-wheel-viewport" tabindex="0" data-dial="last">
-                        <div class="scroll-wheel-center-indicator"></div>
-                        <div class="scroll-wheel-track" id="lastNameTrack"></div>
-                    </div>
-                </div>
+            <div class="saved-names-section">
+                <h3>Saved Names</h3>
+                <textarea id="savedNamesList" placeholder="Saved name combinations will appear here..." readonly></textarea>
             </div>
         </div>
 
         <div class="result">
             <h2 id="fullName">Name Combination</h2>
+            <button class="save-button" id="saveNameBtn">Save Name</button>
         </div>
 
         <div class="input-section">
