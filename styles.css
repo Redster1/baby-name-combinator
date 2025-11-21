@@ -632,6 +632,11 @@ textarea:focus {
         max-width: 100%;
     }
 
+    .container::before,
+    .container::after {
+        display: none;
+    }
+
     .dialers-section {
         flex-direction: column;
         align-items: center;
