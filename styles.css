@@ -545,9 +545,13 @@ textarea {
     font-size: 1em;
     resize: vertical;
     transition: border-color 0.3s ease;
-    min-height: 200px;
+    height: auto;
+    min-height: 100px;
+    max-height: 400px;
+    overflow-y: auto;
     background: #FFFCF7;
     color: #5D4E37;
+    field-sizing: content;
 }
 
 textarea:focus {
@@ -568,7 +572,8 @@ textarea:focus {
     }
 
     .saved-names-section textarea {
-        min-height: 150px;
+        min-height: 120px;
+        max-height: 200px;
     }
 }
 
@@ -596,7 +601,8 @@ textarea:focus {
     }
 
     textarea {
-        min-height: 150px;
+        min-height: 80px;
+        max-height: 300px;
     }
 
     .result {
