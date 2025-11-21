@@ -178,12 +178,13 @@ h3 {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(255, 123, 107, 0.2);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease, border-width 0.15s ease, box-shadow 0.15s ease;
 }
 
 .dial:focus-within {
-    border-color: #FF7B6B;
-    box-shadow: 0 4px 20px rgba(255, 123, 107, 0.35);
+    border-color: #E85A4F;
+    border-width: 4px;
+    box-shadow: 0 0 0 3px rgba(232, 90, 79, 0.25), 0 4px 20px rgba(255, 123, 107, 0.4);
 }
 
 .scroll-wheel-viewport {
