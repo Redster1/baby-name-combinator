@@ -93,12 +93,224 @@ h3 {
     box-shadow: 0 4px 20px rgba(255, 123, 107, 0.12);
 }
 
-.saved-names-section h3 {
-    color: #E76A5C;
-    font-size: 1.1em;
+.saved-names-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 2px solid rgba(255, 123, 107, 0.15);
+    position: relative;
+}
+
+.saved-names-section h3 {
+    color: #E76A5C;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.share-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: linear-gradient(135deg, #FF8C7A 0%, #FF7B6B 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(255, 123, 107, 0.3);
+    letter-spacing: 0.3px;
+}
+
+.share-button:hover {
+    background: linear-gradient(135deg, #FF7B6B 0%, #E76A5C 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255, 123, 107, 0.4);
+}
+
+.share-button:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 6px rgba(255, 123, 107, 0.3);
+}
+
+.share-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* Share Modal */
+.share-modal {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 100;
+}
+
+.share-modal.active {
+    display: block;
+    animation: modalFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.share-modal-arrow {
+    position: absolute;
+    top: -8px;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    transform: rotate(45deg);
+    border-left: 1px solid rgba(255, 205, 178, 0.5);
+    border-top: 1px solid rgba(255, 205, 178, 0.5);
+    border-radius: 3px 0 0 0;
+    z-index: 1;
+}
+
+.share-modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.04),
+        0 10px 20px rgba(0, 0, 0, 0.08),
+        0 20px 40px rgba(255, 123, 107, 0.12);
+    border: 1px solid rgba(255, 205, 178, 0.5);
+    min-width: 260px;
+    overflow: hidden;
+}
+
+.share-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #FFFAF8 0%, #FFF5F0 100%);
+    border-bottom: 1px solid rgba(255, 205, 178, 0.4);
+    font-weight: 600;
+    color: #5D4E37;
+    font-size: 0.85em;
+    letter-spacing: 0.2px;
+}
+
+.share-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 123, 107, 0.08);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #7D6B56;
+    transition: all 0.2s ease;
+}
+
+.share-modal-close:hover {
+    background: rgba(255, 123, 107, 0.15);
+    color: #E76A5C;
+    transform: scale(1.05);
+}
+
+.share-modal-close:active {
+    transform: scale(0.95);
+}
+
+.share-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 14px;
+    background: #FFFCFA;
+}
+
+.share-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px;
+    background: white;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.72em;
+    color: #5D4E37;
+}
+
+.share-option:hover {
+    background: #FFF8F5;
+    border-color: rgba(255, 123, 107, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 123, 107, 0.12);
+}
+
+.share-option:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: none;
+}
+
+.share-option-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FFF0EB 0%, #FFE8E0 100%);
+    color: #E76A5C;
+    transition: all 0.2s ease;
+}
+
+.share-option:hover .share-option-icon {
+    transform: scale(1.08);
+}
+
+/* Branded icon colors */
+.share-option-icon.sms-icon {
+    background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+    color: #43A047;
+}
+
+.share-option-icon.whatsapp-icon {
+    background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+    color: #25D366;
+}
+
+.share-option-icon.messenger-icon {
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    color: #0084FF;
+}
+
+.share-option-icon.email-icon {
+    background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+    color: #FB8C00;
+}
+
+.share-option-icon.more-icon {
+    background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+    color: #8E24AA;
+}
+
+.share-option span:last-child {
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 
 .saved-names-section textarea {
@@ -333,9 +545,13 @@ textarea {
     font-size: 1em;
     resize: vertical;
     transition: border-color 0.3s ease;
-    min-height: 200px;
+    height: auto;
+    min-height: 100px;
+    max-height: 400px;
+    overflow-y: auto;
     background: #FFFCF7;
     color: #5D4E37;
+    field-sizing: content;
 }
 
 textarea:focus {
@@ -356,7 +572,8 @@ textarea:focus {
     }
 
     .saved-names-section textarea {
-        min-height: 150px;
+        min-height: 120px;
+        max-height: 200px;
     }
 }
 
@@ -384,7 +601,8 @@ textarea:focus {
     }
 
     textarea {
-        min-height: 150px;
+        min-height: 80px;
+        max-height: 300px;
     }
 
     .result {
