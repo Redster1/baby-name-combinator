@@ -508,3 +508,119 @@ requestAnimationFrame(() => {
         firstNameDial.viewport.focus();
     });
 });
+
+// Share functionality
+const shareBtn = document.getElementById('shareBtn');
+const shareModal = document.getElementById('shareModal');
+const shareModalClose = document.getElementById('shareModalClose');
+
+function getShareText() {
+    const savedNames = document.getElementById('savedNamesList').value;
+    if (!savedNames.trim()) {
+        return null;
+    }
+    return `Baby name ideas we're considering:\n\n${savedNames}\n\nWhat do you think?`;
+}
+
+function toggleShareModal() {
+    const savedNames = document.getElementById('savedNamesList').value;
+    if (!savedNames.trim()) {
+        alert('Save some names first before sharing!');
+        return;
+    }
+    shareModal.classList.toggle('active');
+}
+
+function closeShareModal() {
+    shareModal.classList.remove('active');
+}
+
+// Share button click
+shareBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleShareModal();
+});
+
+// Close button
+shareModalClose.addEventListener('click', closeShareModal);
+
+// Close when clicking outside
+document.addEventListener('click', (e) => {
+    if (!shareModal.contains(e.target) && e.target !== shareBtn) {
+        closeShareModal();
+    }
+});
+
+// Handle share options
+document.querySelectorAll('.share-option').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const shareType = btn.dataset.share;
+        const text = getShareText();
+
+        if (!text) {
+            alert('Save some names first before sharing!');
+            return;
+        }
+
+        const encodedText = encodeURIComponent(text);
+
+        switch (shareType) {
+            case 'copy':
+                try {
+                    await navigator.clipboard.writeText(text);
+                    btn.querySelector('span:last-child').textContent = 'Copied!';
+                    setTimeout(() => {
+                        btn.querySelector('span:last-child').textContent = 'Copy';
+                    }, 2000);
+                } catch (err) {
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    btn.querySelector('span:last-child').textContent = 'Copied!';
+                    setTimeout(() => {
+                        btn.querySelector('span:last-child').textContent = 'Copy';
+                    }, 2000);
+                }
+                break;
+
+            case 'sms':
+                window.open(`sms:?body=${encodedText}`, '_blank');
+                break;
+
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+                break;
+
+            case 'messenger':
+                window.open(`fb-messenger://share/?link=${encodeURIComponent(window.location.href)}&app_id=0`, '_blank');
+                break;
+
+            case 'email':
+                window.open(`mailto:?subject=${encodeURIComponent('Baby Name Ideas')}&body=${encodedText}`, '_blank');
+                break;
+
+            case 'native':
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Baby Name Ideas',
+                            text: text
+                        });
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            console.log('Share failed:', err);
+                        }
+                    }
+                } else {
+                    alert('Native sharing not available on this device. Try copying instead!');
+                }
+                break;
+        }
+
+        closeShareModal();
+    });
+});
