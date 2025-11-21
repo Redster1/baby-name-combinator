@@ -622,8 +622,14 @@ textarea:focus {
 }
 
 @media (max-width: 520px) {
+    body {
+        padding: 10px;
+    }
+
     .container {
         padding: 15px;
+        width: 100%;
+        max-width: 100%;
     }
 
     .dialers-section {
