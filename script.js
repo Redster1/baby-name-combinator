@@ -43,6 +43,9 @@ class NameDial {
         // Mouse drag events
         this.viewport.addEventListener('mousedown', (e) => this.handleMouseDown(e));
 
+        // Focus viewport when clicked so keyboard navigation works
+        this.viewport.addEventListener('click', () => this.viewport.focus());
+
         // Store bound functions so we can remove them later
         this.boundMouseMove = (e) => this.handleMouseMove(e);
         this.boundMouseUp = (e) => this.handleMouseUp(e);
